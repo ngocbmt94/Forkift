@@ -1,5 +1,5 @@
 import { async } from 'regenerator-runtime';
-import { API_URL, API_KEY } from './config.js';
+import { API_URL, API_KEY, RECIPE_PER_PAGE } from './config.js';
 import { getJSON } from './helper.js';
 
 export const state = {
@@ -7,6 +7,8 @@ export const state = {
   search: {
     query: '',
     searchResult: [],
+    resultPerPage: RECIPE_PER_PAGE,
+    page: 1,
   },
   bookMark: [],
 };
@@ -26,7 +28,6 @@ export const loadSearchResult = async function (query) {
   try {
     const data = await getJSON(`${API_URL}?search=${query}&key=${API_KEY}`);
 
-    console.log(data);
     // check query valid.
     if (data.results === 0)
       throw new Error(`can not found recipe with ${query}`);
@@ -37,4 +38,13 @@ export const loadSearchResult = async function (query) {
     console.error(err);
     throw err;
   }
+};
+
+export const getSearchResultPage = function (page = state.search.page) {
+  const start = (page - 1) * state.search.resultPerPage; // 0
+  const end = page * state.search.resultPerPage; // 9
+
+  state.search.page = page;
+
+  return state.search.searchResult.slice(start, end);
 };
