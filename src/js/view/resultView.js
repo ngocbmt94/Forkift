@@ -7,10 +7,12 @@ class ResultView extends View {
   }
 
   _generateHTML() {
+    const id = window.location.hash.slice(1);
+    console.log(id);
     return this._data
       .map(el => {
         return `
-        <li class="preview">
+        <li class="preview ${el.id === id ? 'preview__link--active' : ''}">
           <a class="preview__link " href="#${el.id}">
             <figure class="preview__fig">
               <img src="${el.image_url}" alt="${el.title}" />

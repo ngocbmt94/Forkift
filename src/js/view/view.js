@@ -17,6 +17,36 @@ export class View {
     this._parentEl.insertAdjacentHTML('afterbegin', html);
   }
 
+  update(data) {
+    this._data = data;
+    const newHTML = this._generateHTML(); // output: String
+
+    const newDOM = new Range().createContextualFragment(newHTML); // output: #document-fragment: html fake
+    const newElement = Array.from(newDOM.querySelectorAll('*')); // covert from Nodelist to array
+    const curElement = Array.from(this._parentEl.querySelectorAll('*')); // covert from Nodelist to array
+
+    newElement.forEach((newEl, i) => {
+      const curEl = curElement[i];
+      // compare content of node & change textContent
+      if (
+        !newEl.isEqualNode(curEl) &&
+        newEl.firstChild?.nodeValue.trim() !== ''
+      ) {
+        // console.log('before', curEl, 'after', newEl);
+        curEl.textContent = newEl.textContent;
+      }
+
+      // compare content of node & change attributes
+      if (!newEl.isEqualNode(curEl)) {
+        const arrAttr = Array.from(newEl.attributes);
+
+        arrAttr.forEach(itemAttr =>
+          curEl.setAttribute(itemAttr.name, itemAttr.value)
+        );
+      }
+    });
+  }
+
   renderError(err) {
     const htmlError = `<div class="error">
       <div>

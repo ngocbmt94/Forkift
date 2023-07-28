@@ -9,7 +9,7 @@ class PaginationView extends View {
   _renderBtnNext() {
     return `
     <button class="btn--inline pagination__btn--next">
-        <span>Page ${this._data.page + 1}</span>
+        <span>${this._data.page + 1}</span>
         <svg class="search__icon">
             <use href="${icons}#icon-arrow-right"></use>
         </svg>
@@ -21,7 +21,7 @@ class PaginationView extends View {
         <svg class="search__icon">
             <use href="${icons}#icon-arrow-left"></use>
         </svg>
-        <span>Page ${this._data.page - 1}</span>
+        <span>${this._data.page - 1}</span>
     </button>`;
   }
 
@@ -49,7 +49,10 @@ class PaginationView extends View {
   addHandlerPaginationBtn(action) {
     this._parentEl.addEventListener('click', function (e) {
       const btnClicked = e.target.closest('.btn--inline');
+
+      if (!btnClicked) return;
       const pageClicked = Number(btnClicked.querySelector('span').innerHTML);
+
       action(pageClicked);
     });
   }
