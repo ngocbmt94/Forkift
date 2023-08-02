@@ -3,6 +3,7 @@ import recipeView from './view/recipeView.js';
 import searchView from './view/searchView.js';
 import resultView from './view/resultView.js';
 import paginationView from './view/paginationView.js';
+import bookmarkView from './view/bookmarkView.js';
 
 import 'core-js/stable'; // core-js là tập hợp các polyfill cho các tính năng chưa được trình duyệt cập nhập. vd Tren IE8 k support array.prototype.find
 import 'regenerator-runtime/runtime.js'; // polyfill for async/ await
@@ -17,9 +18,15 @@ import { async } from 'regenerator-runtime';
 ///////////////////////////////////////
 const controlRecipe = async function () {
   try {
-    // 1.get id from URLhash
+    // 0.get id from URLhash
     const id = window.location.hash.slice(1);
     if (!id) return;
+
+    // 1.Update results view to mark selected search result(active class "preview__link--active" base on id)
+    resultView.update(model.getSearchResultPage());
+
+    // 2. Update results bookmark view to mark selected search result(active class "preview__link--active" base on id)
+    bookmarkView.update(model.state.bookMark);
 
     // 2.show spinner when loading recipe
     recipeView.renderSpinner();
@@ -70,10 +77,25 @@ const controlServings = function (numberServing) {
   recipeView.update(model.state.recipe);
 };
 
+const controlAddBookmark = function () {
+  // 1.add / remove bookMark in array on state.
+  model.addBookMark(model.state.recipe);
+
+  // 2. renderbookMark list
+  bookmarkView.render(model.state.bookMark);
+};
+
+const controlLocalStorage = function () {
+  // render bookmark list from local storage
+  bookmarkView.render(model.getLocalStorage());
+};
+
 const init = function () {
   recipeView.addHandlerRender(controlRecipe);
   searchView.addHandlerSearch(controlSearchResult);
   paginationView.addHandlerPaginationBtn(controlPagination);
   recipeView.addHandlerClickServings(controlServings); // not async
+  recipeView.addHandlerBookmark(controlAddBookmark);
+  bookmarkView.addHandlerLoadPage(controlLocalStorage);
 };
 init();

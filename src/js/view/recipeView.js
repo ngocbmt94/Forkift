@@ -61,11 +61,7 @@ class RecipeView extends View {
           <use href="${icons}#icon-user"></use>
         </svg>
       </div>
-      <button class="btn--round">
-        <svg class="">
-          <use href="${icons}#icon-bookmark-fill"></use>
-        </svg>
-      </button>
+      ${this._renderAddBookMark(this._data.add)}
     </div>
   
     <div class="recipe__ingredients">
@@ -92,6 +88,19 @@ class RecipeView extends View {
         </svg>
       </a>
     </div>
+    `;
+  }
+
+  _renderAddBookMark(add) {
+    const href = !add
+      ? `${icons}#icon-bookmark`
+      : `${icons}#icon-bookmark-fill`;
+    return `
+    <button class="btn--round btn--bookmark">
+      <svg class="">
+        <use href="${href}"></use>
+      </svg>
+    </button>
     `;
   }
 
@@ -129,6 +138,23 @@ class RecipeView extends View {
       if (!btnClicked) return;
       const updateTo = +btnClicked.dataset.updateTo;
       if (updateTo > 0) action(updateTo);
+    });
+  }
+
+  addHandlerBookmark(action) {
+    this._parentEl.addEventListener('click', e => {
+      const eLclicked = e.target.closest('.btn--bookmark');
+
+      if (!eLclicked) return;
+      let svg = eLclicked.querySelector('svg use');
+
+      if (!this._data.add) {
+        svg.setAttribute('href', `${icons}#icon-bookmark-fill`);
+      } else {
+        svg.setAttribute('href', `${icons}#icon-bookmark`);
+      }
+
+      action();
     });
   }
 }

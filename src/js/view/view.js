@@ -11,6 +11,9 @@ export class View {
   }
 
   render(data) {
+    if (!data || (Array.isArray(data) && data.length === 0))
+      return this.renderError();
+
     this._data = data;
     const html = this._generateHTML();
     this._parentEl.innerHTML = '';
@@ -60,6 +63,7 @@ export class View {
     this._parentEl.innerHTML = '';
     this._parentEl.insertAdjacentHTML('afterbegin', htmlError);
   }
+
   renderMessage(message = this._message) {
     const htmlMessage = `<div class="message">
       <div>
@@ -73,6 +77,7 @@ export class View {
     this._parentEl.innerHTML = '';
     this._parentEl.insertAdjacentHTML('afterbegin', htmlMessage);
   }
+
   renderSpinner() {
     const htmlSpinner = `
     <div class="spinner">
