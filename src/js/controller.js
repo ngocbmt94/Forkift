@@ -4,6 +4,7 @@ import searchView from './view/searchView.js';
 import resultView from './view/resultView.js';
 import paginationView from './view/paginationView.js';
 import bookmarkView from './view/bookmarkView.js';
+import addNewRecipe from './view/addNewRecipeView.js';
 
 import 'core-js/stable'; // core-js là tập hợp các polyfill cho các tính năng chưa được trình duyệt cập nhập. vd Tren IE8 k support array.prototype.find
 import 'regenerator-runtime/runtime.js'; // polyfill for async/ await
@@ -22,20 +23,20 @@ const controlRecipe = async function () {
     const id = window.location.hash.slice(1);
     if (!id) return;
 
-    // 1.Update results view to mark selected search result(active class "preview__link--active" base on id)
-    resultView.update(model.getSearchResultPage());
-
-    // 2. Update results bookmark view to mark selected search result(active class "preview__link--active" base on id)
-    bookmarkView.update(model.state.bookMark);
-
-    // 2.show spinner when loading recipe
+    // 1. show spinner when loading recipe
     recipeView.renderSpinner();
 
-    // 3.loading recipe
+    // 2. loading recipe
     await model.loadRecipe(id);
 
-    // 4.show recipe
+    // 3. show recipe
     recipeView.render(model.state.recipe);
+
+    // 4. Update results view to mark selected search result(active class "preview__link--active" base on id)
+    resultView.update(model.getSearchResultPage());
+
+    // 5. Update results bookmark view to mark selected search result(active class "preview__link--active" base on id)
+    bookmarkView.update(model.state.bookMark);
   } catch (err) {
     recipeView.renderError(err);
     console.error(err);
@@ -81,15 +82,38 @@ const controlAddBookmark = function () {
   // 1.add / remove bookMark in array on state.
   model.addBookMark(model.state.recipe);
 
-  // 2. renderbookMark list
+  // 2. render bookMark list
   bookmarkView.render(model.state.bookMark);
+
+  // 3. update btn bookmark
+  recipeView.update(model.state.recipe);
 };
 
 const controlLocalStorage = function () {
   // render bookmark list from local storage
   bookmarkView.render(model.getLocalStorage());
 };
+const controlAddRecipe = async function (newRecipe) {
+  try {
+    // show spinner when loading recipe
+    addNewRecipe.renderSpinner();
 
+    // format data recipe & sendJSON
+    await model.uploadNewRecipe(newRecipe);
+
+    // change id in url on location
+    window.location.href = `${window.location.origin}#${model.state.recipe.id}`;
+
+    // render new data recipe uploaded on UI
+    recipeView.render(model.state.recipe);
+
+    // add my recipe in bookmark
+    controlAddBookmark();
+  } catch (err) {
+    addNewRecipe.renderError(err);
+    console.error(err);
+  }
+};
 const init = function () {
   recipeView.addHandlerRender(controlRecipe);
   searchView.addHandlerSearch(controlSearchResult);
@@ -97,5 +121,6 @@ const init = function () {
   recipeView.addHandlerClickServings(controlServings); // not async
   recipeView.addHandlerBookmark(controlAddBookmark);
   bookmarkView.addHandlerLoadPage(controlLocalStorage);
+  addNewRecipe.addHandlerUpload(controlAddRecipe);
 };
 init();

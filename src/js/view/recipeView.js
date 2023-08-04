@@ -56,12 +56,12 @@ class RecipeView extends View {
         </div>
       </div>
   
-      <div class="recipe__user-generated">
+      <div class="recipe__user-generated ${this._data.key ? '' : 'hidden'}">
         <svg>
           <use href="${icons}#icon-user"></use>
         </svg>
       </div>
-      ${this._renderAddBookMark(this._data.add)}
+      ${this._renderAddBookMark(this._data.bookMarkAdded)}
     </div>
   
     <div class="recipe__ingredients">
@@ -92,9 +92,7 @@ class RecipeView extends View {
   }
 
   _renderAddBookMark(add) {
-    const href = !add
-      ? `${icons}#icon-bookmark`
-      : `${icons}#icon-bookmark-fill`;
+    const href = add ? `${icons}#icon-bookmark-fill` : `${icons}#icon-bookmark`;
     return `
     <button class="btn--round btn--bookmark">
       <svg class="">
@@ -141,19 +139,9 @@ class RecipeView extends View {
     });
   }
 
+  // event to click bookmark
   addHandlerBookmark(action) {
     this._parentEl.addEventListener('click', e => {
-      const eLclicked = e.target.closest('.btn--bookmark');
-
-      if (!eLclicked) return;
-      let svg = eLclicked.querySelector('svg use');
-
-      if (!this._data.add) {
-        svg.setAttribute('href', `${icons}#icon-bookmark-fill`);
-      } else {
-        svg.setAttribute('href', `${icons}#icon-bookmark`);
-      }
-
       action();
     });
   }
