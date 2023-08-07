@@ -10,6 +10,13 @@ export class View {
     this._errorMessage = textError;
   }
 
+  /**
+   * Render the received object to the DOM
+   * @param {Object | Array} The data to be rendered
+   * @returns {undefined}
+   * @this {Object} View instance
+   * @author Bich Ngoc
+   */
   render(data) {
     if (!data || (Array.isArray(data) && data.length === 0))
       return this.renderError();
