@@ -1,4 +1,4 @@
-# Forkify App:
+# Recipe cooking App:
 
 The simple app to search the recipe for meal, pagination the recipe by searching, add my recipe, mark selected recipe.
 
@@ -14,7 +14,7 @@ All this app is built by MVC structure.
 
 ### View the app (Hosted on Netlify):
 
-https://forkify-mvc-demo.netlify.app/
+https://recipe-cooking-mvc.netlify.app/
 
 ### Tools
 
